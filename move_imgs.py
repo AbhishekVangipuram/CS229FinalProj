@@ -1,3 +1,5 @@
+# Run this first to create the complete data folder
+
 import os
 import shutil
 from tqdm import tqdm
