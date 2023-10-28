@@ -24,15 +24,16 @@ lr = LogisticRegression(multi_class='multinomial')
 
 print("training")
 
-X_train = X_train.reshape(X_train.shape[0], -1)
-
 lr.fit(X_train, y_train)
 
 print("predicting")
 
-X_val = X_val.reshape(X_val.shape[0], -1)
-
 predictions = lr.predict(X_val)
 
-print((predictions == y_val).mean())
+print("val error: " + str((predictions == y_val).mean()))
+
+train_preds = lr.predict(X_train)
+
+print("train error: " + str((train_preds == y_train).mean()))
+
 

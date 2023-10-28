@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 import cv2
+import tifffile
 
 # Pull labels
 def get_labels():
@@ -22,13 +23,25 @@ def get_high_res():
     labels = get_labels()
     high_res = []
     for index, row in tqdm(labels.iterrows()):
-        high_res.append(cv2.cvtColor(cv2.imread(f"{row['split']}_split/{index}/{index}_rgb.png"), cv2.COLOR_BGR2RGB))
+        image = cv2.cvtColor(cv2.imread(f"{row['split']}_split/{index}/{index}_rgb.png"), cv2.COLOR_BGR2RGB)
+        high_res.append(image[:, :, :].reshape(-1))
     return np.array(high_res)
 
 # Save array to save time
 def save_high_res():
     high_res = get_high_res()
     np.save("high_res.npy", high_res)
+
+def get_low_res():
+    labels = get_labels()
+    low_res = []
+    for index, row in tqdm(labels.iterrows()):
+        image = tifffile.imread(f"{row['split']}_split/{index}/{index}-1-L2A_data.tiff")
+        arr = np.array([image[:, :, 4], image[:, :, 3], image[:, :, 2]])
+        img = (np.transpose(arr, (1,2,0)) * 256).astype('uint8')
+        low_res.append(img)
+    return np.array(low_res)
+
 
 # Give labels and splits for training
 def get_labels_and_split():

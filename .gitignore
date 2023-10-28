@@ -1,8 +1,10 @@
 Dataset/
+Datasettest/
 train_split/
 val_split/
 test_split/
 *.npy
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -22,5 +22,5 @@ l2a = os.path.join(project_folder, lr_l2a_folder)
 for folder in tqdm(os.listdir(l2a)):
     if os.path.isdir(os.path.join(l2a, folder)):
         for file in (os.listdir(os.path.join(l2a, folder, "L2A"))):
-            if "L2A_data" in file:
+            if "-1-L2A_data" in file:
                 shutil.copy(os.path.join(l2a, folder, "L2A", file), os.path.join(output_path, folder))
