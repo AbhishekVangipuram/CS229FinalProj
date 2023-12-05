@@ -79,7 +79,7 @@ def low():
 
     low_res = np.load('low_res.npy')
 
-    low_res.reshape(low_res.shape[0], -1)
+    # low_res.reshape(low_res.shape[0], -1)
 
     X_train = low_res[train]
     X_val = low_res[val]
