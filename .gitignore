@@ -11,6 +11,7 @@ lr_dataset*/
 meta/
 *.csv
 *.pdf
+make_splits.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

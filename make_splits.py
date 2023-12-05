@@ -15,4 +15,4 @@ df = pd.read_csv(split).drop_duplicates()
 
 for index, row in tqdm(df.iterrows()):
     if not os.path.exists(f"{row['split']}_split/{row['tile']}"):
-        shutil.copytree(f"Dataset/{row['tile']}", f"{row['split']}_split/{row['tile']}")
+        shutil.copytree(f"data/{row['tile']}", f"{row['split']}_split/{row['tile']}")
