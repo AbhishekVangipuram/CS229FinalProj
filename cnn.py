@@ -9,7 +9,9 @@ from tqdm import tqdm
 import cv2
 
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers, models, regularizers
+
+import matplotlib.pyplot as plt
 
 
 
@@ -42,6 +44,7 @@ def high():
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.Flatten(),
         layers.Dense(64, activation='relu'),
+        layers.Dropout(0.5),
         layers.Dense(8, activation='softmax')
         ])
     
@@ -49,7 +52,7 @@ def high():
 
     print("training")
 
-    cnn.fit(X_train, y_train, epochs=10, batch_size=32)
+    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=5, batch_size=32)
 
     print("predicting")
 
@@ -61,6 +64,17 @@ def high():
 
     print("train acc: " + str(train_accuracy))
 
+    training_loss = history.history['accuracy']
+    validation_loss = history.history['val_accuracy']
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(training_loss, label='Training Loss')
+    plt.plot(validation_loss, label='Validation Loss')
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
 
 def low():
     y, train, val, test = util.get_labels_and_split()
@@ -98,7 +112,7 @@ def low():
 
     print("training")
 
-    cnn.fit(X_train, y_train, epochs=10, batch_size=32)
+    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
 
     print("predicting")
 
@@ -109,6 +123,18 @@ def low():
     train_loss, train_accuracy = cnn.evaluate(X_train, y_train)
 
     print("train acc: " + str(train_accuracy))
+
+    training_loss = history.history['accuracy']
+    validation_loss = history.history['val_accuracy']
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(training_loss, label='Training Loss')
+    plt.plot(validation_loss, label='Validation Loss')
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
 
 
 high()
