@@ -26,7 +26,7 @@ def high():
 
 
     # Make this file once with util.save_high_res()
-    high_res = util.get_high_res()
+    high_res = np.load('high_res.npy')
 
     # high_res.reshape(high_res.shape[0], -1)
 
@@ -37,9 +37,10 @@ def high():
     print(X_train.shape)
 
     cnn = models.Sequential([
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(500, 500, 3)),
+        layers.Conv2D(32, (5, 5), activation='relu', input_shape=(500, 500, 3)),
+        layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.Conv2D(64, (5, 5), activation='relu'),
         layers.MaxPooling2D((2, 2)),
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.Flatten(),
@@ -64,18 +65,11 @@ def high():
 
     print("train acc: " + str(train_accuracy))
 
-    training_loss = history.history['accuracy']
-    validation_loss = history.history['val_accuracy']
+    test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 
-    plt.figure(figsize=(10, 5))
-    plt.plot(training_loss, label='Training Loss')
-    plt.plot(validation_loss, label='Validation Loss')
-    plt.title('Training and Validation Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.show()
+    print("test acc: " + str(test_accuracy))
 
+    cnn.save('high_cnn.keras')
 def low():
     y, train, val, test = util.get_labels_and_split()
 
@@ -86,25 +80,28 @@ def low():
     y_test  = tf.one_hot(y_test,  depth=8)
 
 
-    # Make this file once with util.save_high_res()
-    high_res = util.get_low_res()
+    low_res = np.load('low_res.npy')
 
-    high_res.reshape(high_res.shape[0], -1)
+    # low_res.reshape(low_res.shape[0], -1)
 
-    X_train = high_res[train]
-    X_val = high_res[val]
-    X_test = high_res[test]
+    X_train = low_res[train]
+    X_val = low_res[val]
+    X_test = low_res[test]
 
     print(X_train.shape)
 
     cnn = models.Sequential([
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(500, 500, 3)),
+        layers.Conv2D(32, (5, 5), activation='relu', input_shape=(147, 147, 3)),
+        layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
         layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
         layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.Dropout(0.3),
         layers.Flatten(),
         layers.Dense(64, activation='relu'),
+        layers.Dropout(0.3),
         layers.Dense(8, activation='softmax')
         ])
     
@@ -124,17 +121,13 @@ def low():
 
     print("train acc: " + str(train_accuracy))
 
-    training_loss = history.history['accuracy']
-    validation_loss = history.history['val_accuracy']
+    test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 
-    plt.figure(figsize=(10, 5))
-    plt.plot(training_loss, label='Training Loss')
-    plt.plot(validation_loss, label='Validation Loss')
-    plt.title('Training and Validation Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.show()
+    print("test acc: " + str(test_accuracy))
+
+    cnn.save('low_cnn.keras')
 
 
+
+# low()
 high()
