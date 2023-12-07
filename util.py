@@ -44,6 +44,35 @@ def get_low_res():
     return np.array(low_res)
 
 
+def get_labels_augmented():
+    df_labels = pd.read_csv("WorldStrat Dataset.csv", index_col=0)[["SMOD Class"]]
+    df_labels = df_labels[~df_labels.index.duplicated(keep='first')]
+    df_splits = pd.read_csv("stratified split.csv", index_col="tile")[["split"]]
+    df_splits = df_splits[~df_splits.index.duplicated(keep='first')]
+    df_unified = pd.merge(df_labels, df_splits, left_index=True, right_index=True)
+    df_unified["SMOD Class"] = df_unified["SMOD Class"].map({"Water":0, "Rural: Very Low Dens":1, "Rural: Low Dens":2, "Rural: cluster":3, "Urban: Suburban":4, "Urban: Semi-dense":5, "Urban: Dense":6, "Urban: Centre":7})
+    df_final = df_unified.drop("ASMSpotter-1-1-1")
+    df_dupe = pd.concat([df_final, df_final[df_final["SMOD Class"] == 1]].copy(), ignore_index=True)
+    return df_dupe
+
+
+def get_low_res_augmented():
+    labels = get_labels()
+    low_res = []
+    for index, row in tqdm(labels.iterrows()):
+        loop = 1 if row["SMOD Class"] == 1 else 2
+        for i in range(loop):
+            image = tifffile.imread(f"{row['split']}_split/{index}/{index}-1-L2A_data.tiff")
+            arr = np.array([image[:, :, 4], image[:, :, 3], image[:, :, 2]])
+            img = (np.transpose(arr, (1,2,0)) * 256).astype('uint8')
+            if np.random.randint(2):
+                img = np.flip(img, axis=0)
+            if np.random.randint(2):
+                img = np.flip(img, axis=1)
+            low_res.append(img[:147, :147, :])
+    return np.array(low_res)
+
+
 # Give labels and splits for training
 def get_labels_and_split():
     labels = get_labels()
