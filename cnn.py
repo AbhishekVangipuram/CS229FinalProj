@@ -91,6 +91,9 @@ def low():
         layers.Conv2D(32, (5, 5), activation='relu', input_shape=(147, 147, 3)),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(64, (5, 5), activation='relu'),
+        layers.Dropout(0.3),
+        layers.MaxPooling2D((2, 2)),
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
@@ -107,6 +110,12 @@ def low():
     print("training")
 
     cnn.fit(X_train, y_train, epochs=10, batch_size=32)
+    # possibel things to remedy the majority of the one urban density class
+    # add weigths in loss function to make unrepresented class moreimportant
+    # within each batch, try to have about an equal proportion of each ubran class
+    # coudl add augmentations i.e. flip, random noise, crop and zoom
+
+    # maybe do pca for dimension reduction for the traiditional models (miltinomial, NB)
 
     print("predicting")
 
@@ -122,9 +131,9 @@ def low():
 
     print("test acc: " + str(test_accuracy))
 
-    cnn.save('low_cnn.keras')
+    # cnn.save('low_cnn.keras')
 
 
 
-# low()
-high()
+low()
+# high()
