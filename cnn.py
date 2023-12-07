@@ -9,7 +9,9 @@ from tqdm import tqdm
 import cv2
 
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers, models, regularizers
+
+import matplotlib.pyplot as plt
 
 
 
@@ -43,6 +45,7 @@ def high():
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.Flatten(),
         layers.Dense(64, activation='relu'),
+        layers.Dropout(0.5),
         layers.Dense(8, activation='softmax')
         ])
     
@@ -50,7 +53,7 @@ def high():
 
     print("training")
 
-    cnn.fit(X_train, y_train, epochs=10, batch_size=32)
+    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=5, batch_size=32)
 
     print("predicting")
 
@@ -109,7 +112,7 @@ def low():
 
     print("training")
 
-    cnn.fit(X_train, y_train, epochs=10, batch_size=32)
+    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
     # possibel things to remedy the majority of the one urban density class
     # add weigths in loss function to make unrepresented class moreimportant
     # within each batch, try to have about an equal proportion of each ubran class
