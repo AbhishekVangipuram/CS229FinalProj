@@ -1,3 +1,9 @@
+###
+### BROKEN: DOESN'T PREDICT ANYTHING CORRECTLY
+###
+
+
+
 import util
 import pandas as pd
 import numpy as np
@@ -11,10 +17,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.applications import ResNet152
 from tensorflow.keras.optimizers import Adam
+from sklearn.utils.class_weight import compute_class_weight
+
 
 y, train, val, test = util.get_labels_and_split_full_augmented() # Can use anything here
 
 y_train, y_val, y_test = y[train], y[val], y[test]
+
+y_keep = y_train
 
 y_train = tf.one_hot(y_train, depth=8)
 y_val   = tf.one_hot(y_val,   depth=8)
@@ -37,21 +47,44 @@ base_model = ResNet152(weights='imagenet', include_top=False, input_shape=(147, 
 for layer in base_model.layers:
     layer.trainable = False
 
-model = models.Sequential()
-model.add(base_model)
-model.add(layers.GlobalAveragePooling2D())
-model.add(layers.Dense(256, activation='relu'))
-model.add(layers.Dropout(0.3))
-model.add(layers.Dense(8, activation='softmax'))
+def create_weighted_vgg_model(input_shape, num_classes):
+    model = models.Sequential()
+
+    model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same', input_shape=input_shape))
+    model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))
+    model.add(layers.MaxPooling2D((2, 2)))
+
+    model.add(layers.Conv2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(layers.MaxPooling2D((2, 2)))
+
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(layers.MaxPooling2D((2, 2)))
+
+
+    model.add(layers.Flatten())
+    model.add(layers.Dense(512, activation='relu'))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(num_classes, activation='softmax'))
+
+    return model
+
+input_shape = (147, 147, 3)
+num_classes = 8
+
+model = create_weighted_vgg_model(input_shape, num_classes)
+
+class_weights = compute_class_weight('balanced', classes=range(num_classes), y=np.array(y_keep))
+
+# Create the model
+model = create_weighted_vgg_model(input_shape, num_classes)
 
 model.compile(optimizer=Adam(lr=0.001),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# Compile the model
-model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
-
-history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=3, batch_size=32)
+history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=3, batch_size=32, class_weight=dict(enumerate(class_weights)))
 
 print("predicting")
 

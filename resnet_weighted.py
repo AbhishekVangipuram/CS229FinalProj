@@ -11,16 +11,20 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.applications import ResNet152
 from tensorflow.keras.optimizers import Adam
+from sklearn.utils.class_weight import compute_class_weight
 
-y, train, val, test = util.get_labels_and_split_full_augmented() # Can use anything here
+
+y, train, val, test = util.get_labels_and_split() # Can use anything here
 
 y_train, y_val, y_test = y[train], y[val], y[test]
+
+y_keep = y_train
 
 y_train = tf.one_hot(y_train, depth=8)
 y_val   = tf.one_hot(y_val,   depth=8)
 y_test  = tf.one_hot(y_test,  depth=8)
 
-low_res = util.get_low_res_full_augmented() # Match abvoe
+low_res = util.get_low_res() # Match abvoe
 # low_res = np.load('low_res.npy')
 
 # low_res.reshape(low_res.shape[0], -1)
@@ -51,7 +55,9 @@ model.compile(optimizer=Adam(lr=0.001),
 # Compile the model
 model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
-history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=3, batch_size=32)
+class_weights = compute_class_weight('balanced', classes=range(8), y=np.array(y_keep))
+
+history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=3, batch_size=32, class_weight=dict(enumerate(class_weights)))
 
 print("predicting")
 
