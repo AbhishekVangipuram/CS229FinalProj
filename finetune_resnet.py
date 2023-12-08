@@ -22,8 +22,6 @@ def high():
     y_val   = tf.one_hot(y_val,   depth=8)
     y_test  = tf.one_hot(y_test,  depth=8)
 
-
-    # Make this file once with util.save_high_res()
     high_res = np.load('high_res.npy')
 
     # high_res.reshape(high_res.shape[0], -1)
@@ -66,9 +64,9 @@ def high():
 
     print("train acc: " + str(train_accuracy))
 
-    # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+    test_loss, test_accuracy = model.evaluate(X_test, y_test)
 
-    # print("test acc: " + str(test_accuracy))
+    print("test acc: " + str(test_accuracy))
 
     # cnn.save('low_cnn.keras')
 
@@ -117,7 +115,7 @@ def low():
     model.add(base_model)
     model.add(layers.GlobalAveragePooling2D())
     model.add(layers.Dense(256, activation='relu'))
-    model.add(layers.Dropout(0.5))
+    model.add(layers.Dropout(0.3))
     model.add(layers.Dense(8, activation='softmax'))
 
     model.compile(optimizer=Adam(learning_rate=0.001),
@@ -139,7 +137,7 @@ def low():
 
     print("train acc: " + str(train_accuracy))
 
-    test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+    test_loss, test_accuracy = model.evaluate(X_test, y_test)
 
     print("test acc: " + str(test_accuracy))
 
@@ -179,7 +177,6 @@ def low():
     print("unaugmented val acc: " + str(val_accuracy))
 
     test_loss, test_accuracy = model.evaluate(X_test, y_test)
-    print('unaugmented test acc:', test_accuracy)
 
     # Save the model
     model.save('low_res_image_classifier.h5')
