@@ -6,6 +6,7 @@ from tqdm import tqdm
 import cv2
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from tensorflow.keras import layers, models
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.applications import ResNet152
