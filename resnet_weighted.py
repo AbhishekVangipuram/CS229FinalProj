@@ -45,7 +45,7 @@ model = models.Sequential()
 model.add(base_model)
 model.add(layers.GlobalAveragePooling2D())
 model.add(layers.Dense(256, activation='relu'))
-model.add(layers.Dropout(0.3))
+model.add(layers.Dropout(0.5))
 model.add(layers.Dense(8, activation='softmax'))
 
 model.compile(optimizer=Adam(lr=0.001),
@@ -64,10 +64,6 @@ print("predicting")
 val_loss, val_accuracy = model.evaluate(X_val, y_val)
 
 print("val acc: " + str(val_accuracy))
-
-train_loss, train_accuracy = model.evaluate(X_train, y_train)
-
-print("train acc: " + str(train_accuracy))
 
 # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 

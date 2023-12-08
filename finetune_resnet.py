@@ -11,8 +11,10 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.applications import ResNet152
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import regularizers
 
-y, train, val, test = util.get_labels_and_split_full_augmented() # Can use anything here
+
+y, train, val, test = util.get_labels_and_split_augmented() # Can use anything here
 
 y_train, y_val, y_test = y[train], y[val], y[test]
 
@@ -20,7 +22,7 @@ y_train = tf.one_hot(y_train, depth=8)
 y_val   = tf.one_hot(y_val,   depth=8)
 y_test  = tf.one_hot(y_test,  depth=8)
 
-low_res = util.get_low_res_full_augmented() # Match abvoe
+low_res = util.get_low_res_augmented() # Match abvoe
 # low_res = np.load('low_res.npy')
 
 # low_res.reshape(low_res.shape[0], -1)
@@ -34,14 +36,15 @@ print(X_train.shape)
 base_model = ResNet152(weights='imagenet', include_top=False, input_shape=(147, 147, 3))
 
 # Freeze the pre-trained layers
-for layer in base_model.layers:
+for layer in base_model.layers[:-10]: #new
     layer.trainable = False
 
 model = models.Sequential()
 model.add(base_model)
 model.add(layers.GlobalAveragePooling2D())
 model.add(layers.Dense(256, activation='relu'))
-model.add(layers.Dropout(0.3))
+model.add(layers.BatchNormalization())
+model.add(layers.Dropout(0.5))
 model.add(layers.Dense(8, activation='softmax'))
 
 model.compile(optimizer=Adam(lr=0.001),
@@ -59,9 +62,6 @@ val_loss, val_accuracy = model.evaluate(X_val, y_val)
 
 print("val acc: " + str(val_accuracy))
 
-train_loss, train_accuracy = model.evaluate(X_train, y_train)
-
-print("train acc: " + str(train_accuracy))
 
 # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 

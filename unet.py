@@ -106,10 +106,6 @@ val_loss, val_accuracy = model.evaluate(X_val, new_y_val)
 
 print("val acc: " + str(val_accuracy))
 
-train_loss, train_accuracy = model.evaluate(X_train, new_y_train)
-
-print("train acc: " + str(train_accuracy))
-
 training_loss = history.history["accuracy"]
 validation_loss = history.history["val_accuracy"]
 
