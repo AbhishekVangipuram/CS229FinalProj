@@ -65,9 +65,21 @@ def high():
 
     print("train acc: " + str(train_accuracy))
 
-    test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+    training_loss = history.history["accuracy"]
+    validation_loss = history.history["val_accuracy"]
 
-    print("test acc: " + str(test_accuracy))
+    plt.figure(figsize=(10,5))
+    plt.plot(training_loss, label="Training Loss")
+    plt.plot(validation_loss, label="Validation Loss")
+    plt.title("Training and Validation Loss")
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.legend()
+    plt.show()
+
+    # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+
+    # print("test acc: " + str(test_accuracy))
 
     cnn.save('high_cnn.keras')
 def low(augment=False):
@@ -96,17 +108,37 @@ def low(augment=False):
 
     print(X_train.shape)
 
+    # cnn = models.Sequential([
+    #     layers.Conv2D(32, (5, 5), activation='relu', input_shape=(147, 147, 3)),
+    #     layers.Dropout(0.3),
+    #     layers.MaxPooling2D((2, 2)),
+    #     layers.Conv2D(64, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01)),
+    #     layers.Dropout(0.3),
+    #     layers.MaxPooling2D((2, 2)),
+    #     layers.Conv2D(64, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01)),
+    #     layers.Dropout(0.3),
+    #     layers.MaxPooling2D((2, 2)),
+    #     layers.Conv2D(64, (3, 3), activation='relu'),
+    #     layers.Dropout(0.3),
+    #     layers.Flatten(),
+    #     layers.Dense(64, activation='relu'),
+    #     layers.Dropout(0.5),
+    #     layers.Dense(8, activation='softmax')
+    #     ])
     cnn = models.Sequential([
         layers.Conv2D(32, (5, 5), activation='relu', input_shape=(147, 147, 3)),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (5, 5), activation='relu'),
+        layers.Conv2D(64, (5, 5), activation='relu',),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.Conv2D(64, (3, 3), activation='relu',),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.Conv2D(64, (3, 3), activation='relu',),
+        layers.Dropout(0.3),
+        layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(64, (3, 3), activation='relu',),
         layers.Dropout(0.3),
         layers.Flatten(),
         layers.Dense(64, activation='relu'),
@@ -118,7 +150,7 @@ def low(augment=False):
 
     print("training")
 
-    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
+    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=20, batch_size=32)
     # possibel things to remedy the majority of the one urban density class
     # add weigths in loss function to make unrepresented class moreimportant
     # within each batch, try to have about an equal proportion of each ubran class
@@ -136,11 +168,50 @@ def low(augment=False):
 
     print("train acc: " + str(train_accuracy))
 
-    test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+    # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 
-    print("test acc: " + str(test_accuracy))
+    # print("test acc: " + str(test_accuracy))
 
     # cnn.save('low_cnn.keras')
+
+    training_loss = history.history["accuracy"]
+    validation_loss = history.history["val_accuracy"]
+
+    plt.figure(figsize=(10,5))
+    plt.plot(training_loss, label="Training Accuracy")
+    plt.plot(validation_loss, label="Validation Accuracy")
+    plt.title("Training and Validation Accuracy")
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.legend()
+    plt.show()
+
+    y, train, val, test = util.get_labels_and_split()
+
+    y_train, y_val, y_test = y[train], y[val], y[test]
+
+    y_train = tf.one_hot(y_train, depth=8)
+    y_val   = tf.one_hot(y_val,   depth=8)
+    y_test  = tf.one_hot(y_test,  depth=8)
+
+    low_res = util.get_low_res()
+   # low_res = np.load('low_res.npy')
+
+    # low_res.reshape(low_res.shape[0], -1)
+
+    X_train = low_res[train]
+    X_val = low_res[val]
+    X_test = low_res[test]
+
+    val_loss, val_accuracy = cnn.evaluate(X_val, y_val)
+
+    print("unaugmented val acc: " + str(val_accuracy))
+
+
+    # Only run at end
+    # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+
+    # print("unaugmented test acc: " + str(test_accuracy))
 
 
 
