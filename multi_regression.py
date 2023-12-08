@@ -76,16 +76,16 @@ def high():
     dump(lr, 'high_multinomial.joblib')
 
 
-def low():
-    y, train, val, test = util.get_labels_and_split()
+def low(augment=False):
+    if augment:
+        y, train, val, test = util.get_labels_and_split_augmented()
+    else: 
+        y, train, val, test = util.get_labels_and_split()
 
     y_train, y_val, y_test = y[train], y[val], y[test]
-
-    # Make this file once with util.save_high_res()
-    low_res = np.load('low_res.npy')
-
-    low_res = low_res.reshape(low_res.shape[0], -1).astype(int)
-
+    low_res = np.load('low_res_aug.npy') if augment else np.load('low_res.npy')
+    low_res = low_res.reshape(low_res.shape[0], -1).astype('uint8')
+    
     X_train = low_res[train]
     X_val = low_res[val]
     X_test = low_res[test]
@@ -95,9 +95,9 @@ def low():
     print("training")
 
     # lr.fit(X_train, y_train)
-    best_acc = 0
-    best_reg = 0
-    best_lr = lr
+    # best_acc = 0
+    # best_reg = 0
+    # best_lr = lr
     # for reg in 10 ** np.linspace(-5,1,num=10):
     #     lr = LogisticRegression(multi_class='multinomial', max_iter=MAX_ITER, C=1/reg, verbose=True)
     #     lr.fit(X_train, y_train)
@@ -128,11 +128,12 @@ def low():
 
     print('test accuracy:', lr.score(X_test, y_test))
 
-    dump(lr, 'low_multinomial.joblib')
+    # dump(lr, 'low_multinomial.joblib')
 
 
 
 
-# low()
+low()
+low(augment=True)
 
-high()
+# high()

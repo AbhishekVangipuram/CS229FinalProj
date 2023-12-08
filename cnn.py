@@ -70,23 +70,29 @@ def high():
     print("test acc: " + str(test_accuracy))
 
     cnn.save('high_cnn.keras')
-def low():
-    y, train, val, test = util.get_labels_and_split()
+def low(augment=False):
+    if augment:
+        y, train, val, test = util.get_labels_and_split_augmented()
+    else: 
+        y, train, val, test = util.get_labels_and_split()
 
     y_train, y_val, y_test = y[train], y[val], y[test]
+    low_res = np.load('low_res_aug.npy') if augment else np.load('low_res.npy')
+
+    X_train = low_res[train]
+    X_val = low_res[val]
+    X_test = low_res[test]
 
     y_train = tf.one_hot(y_train, depth=8)
     y_val   = tf.one_hot(y_val,   depth=8)
     y_test  = tf.one_hot(y_test,  depth=8)
 
 
-    low_res = np.load('low_res.npy')
+    
 
     # low_res.reshape(low_res.shape[0], -1)
 
-    X_train = low_res[train]
-    X_val = low_res[val]
-    X_test = low_res[test]
+    
 
     print(X_train.shape)
 
@@ -138,5 +144,6 @@ def low():
 
 
 
+# low(augment=True)
 low()
 # high()
