@@ -56,9 +56,9 @@ def low(cat=False, augment=False):
     print('here 6')
     print('train acc', nb.score(X_train, y_train))
     print('test acc', nb.score(X_test, y_test))
-    X_test = np.concatenate((X_test, X_val))
-    y_test = np.concatenate((y_test, y_val))
-    print('test+val acc', nb.score(X_test, y_test))
+    # X_test = np.concatenate((X_test, X_val))
+    # y_test = np.concatenate((y_test, y_val))
+    # print('test+val acc', nb.score(X_test, y_test))
 
     # TRY WITH FULL OVERSAMPLING:
     # print(len(X_train_resample))
@@ -71,4 +71,4 @@ def low(cat=False, augment=False):
 
 
 low(augment=True)
-# low(cat=True, augment=True)
+low(cat=True, augment=True)
