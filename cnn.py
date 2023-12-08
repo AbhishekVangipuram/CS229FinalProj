@@ -125,10 +125,16 @@ def low():
         layers.Conv2D(32, (5, 5), activation='relu', input_shape=(147, 147, 3)),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01)),
+        layers.Conv2D(64, (5, 5), activation='relu',),
         layers.Dropout(0.3),
         layers.MaxPooling2D((2, 2)),
-        layers.Conv2D(64, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01)),
+        layers.Conv2D(64, (3, 3), activation='relu',),
+        layers.Dropout(0.3),
+        layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(64, (3, 3), activation='relu',),
+        layers.Dropout(0.3),
+        layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(64, (3, 3), activation='relu',),
         layers.Dropout(0.3),
         layers.Flatten(),
         layers.Dense(64, activation='relu'),
@@ -140,7 +146,7 @@ def low():
 
     print("training")
 
-    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=2, batch_size=32)
+    history = cnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=20, batch_size=32)
     # possibel things to remedy the majority of the one urban density class
     # add weigths in loss function to make unrepresented class moreimportant
     # within each batch, try to have about an equal proportion of each ubran class

@@ -86,7 +86,7 @@ def get_labels_augmented():
     df_unified = pd.merge(df_labels, df_splits, left_index=True, right_index=True)
     df_unified["SMOD Class"] = df_unified["SMOD Class"].map({"Water":0, "Rural: Very Low Dens":1, "Rural: Low Dens":2, "Rural: cluster":3, "Urban: Suburban":4, "Urban: Semi-dense":5, "Urban: Dense":6, "Urban: Centre":7})
     df_final = df_unified.drop("ASMSpotter-1-1-1")
-    df_dupe = pd.concat([df_final, df_final[df_final["SMOD Class"] != 1]], ignore_index=False) 
+    df_dupe = pd.concat([df_final, df_final[df_final["SMOD Class"] != 1], df_final[df_final["SMOD Class"] != 1]], ignore_index=False) 
     return df_dupe
 
 
@@ -101,10 +101,12 @@ def get_low_res_augmented():
         arr = np.array([image[:, :, 4], image[:, :, 3], image[:, :, 2]])
         img = (np.transpose(arr, (1,2,0)) * 256).astype('uint8')
         if count >= len_1 and count < len_1+len_2:
-            img = np.flip(img, axis=0)
-        if count >= len_1+len_2 and count < len_1+2*len_2:
-            img = np.flip(img, axis=1)
-        if count >= len_1+2*len_2:
+            random = np.random.randint(3)
+            if random:
+                img = np.flip(img, axis=0)
+            if random < 2:
+                img = np.flip(img, axis=1)
+        if count >= len_1+len_2:
             noise_img = random_noise(img, mode='s&p', amount=0.015)
             noise_img = np.array(255*noise_img, dtype='uint8')
             img = noise_img
