@@ -97,8 +97,8 @@ def low():
     y_val   = tf.one_hot(y_val,   depth=8)
     y_test  = tf.one_hot(y_test,  depth=8)
 
-    # low_res = util.get_low_res_full_augmented() # Match abvoe
-    low_res = np.load('low_res_aug.npy')
+    low_res = util.get_low_res_augmented() # Match abvoe
+    #low_res = np.load('low_res_aug.npy')
 
     # low_res.reshape(low_res.shape[0], -1)
 
@@ -118,7 +118,7 @@ def low():
     model.add(base_model)
     model.add(layers.GlobalAveragePooling2D())
     model.add(layers.Dense(256, activation='relu'))
-    model.add(layers.Dropout(0.3))
+    model.add(layers.Dropout(0.5))
     model.add(layers.Dense(8, activation='softmax'))
 
     model.compile(optimizer=Adam(learning_rate=0.001),
@@ -126,9 +126,9 @@ def low():
                 metrics=['accuracy'])
 
     # Compile the model
-    model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=Adam(learning_rate=0.01), loss='categorical_crossentropy', metrics=['accuracy'])
 
-    history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
+    history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=3, batch_size=32)
 
     print("predicting")
 
@@ -188,4 +188,4 @@ def low():
 
 
 low()
-high()
+#high()
