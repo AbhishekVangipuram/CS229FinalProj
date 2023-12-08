@@ -115,7 +115,7 @@ def get_labels_full_augmented():
 def get_low_res_augmented():
     len_1 = len(get_labels())
     aug_labels = get_labels_augmented()
-    len_2 = (len(aug_labels)-len_1) / 3
+    len_2 = (len(aug_labels)-len_1) / 2
     count = 0
     low_res = []
     for index, row in tqdm(aug_labels.iterrows()):

@@ -6,14 +6,22 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
-import cv2
 
 import tensorflow as tf
 from tensorflow.keras import layers, models, regularizers
+# from tensorflow.keras.losses import Loss
 
 import matplotlib.pyplot as plt
 
 
+counts = [ 204, 1736,  771, 405,  624,  240,  474, 1413]
+props = np.array(counts) / sum(counts)
+weights = 1 / props
+def wcce():
+    def wcce_(y_true, y_pred):
+        cce = tf.keras.losses.CategoricalCrossentropy()
+        return cce.__call__(y_true=y_true, y_pred=y_pred, sample_weight=weights)
+    return wcce_
 
 def high():
     y, train, val, test = util.get_labels_and_split()
@@ -82,14 +90,12 @@ def high():
     # print("test acc: " + str(test_accuracy))
 
     cnn.save('high_cnn.keras')
-def low(augment=False):
-    if augment:
-        y, train, val, test = util.get_labels_and_split_augmented()
-    else: 
-        y, train, val, test = util.get_labels_and_split()
+def low():
 
+    y, train, val, test = util.get_labels_and_split_augmented()
+    
     y_train, y_val, y_test = y[train], y[val], y[test]
-    low_res = np.load('low_res_aug.npy') if augment else np.load('low_res.npy')
+    low_res = np.load('low_res_aug.npy')
 
     X_train = low_res[train]
     X_val = low_res[val]
@@ -146,7 +152,7 @@ def low(augment=False):
         layers.Dense(8, activation='softmax')
         ])
     
-    cnn.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    cnn.compile(optimizer='adam', loss=wcce() , metrics=['accuracy'])
 
     print("training")
 
@@ -168,9 +174,9 @@ def low(augment=False):
 
     print("train acc: " + str(train_accuracy))
 
-    # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
+    test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 
-    # print("test acc: " + str(test_accuracy))
+    print("test acc: " + str(test_accuracy))
 
     # cnn.save('low_cnn.keras')
 
