@@ -36,7 +36,6 @@ print(X_train.shape)
 def unet_model(input_shape=(147, 147, 3), num_classes=8):
     inputs = tf.keras.Input(shape=input_shape)
 
-    # Encoder
     conv1 = layers.Conv2D(64, 3, activation='relu', padding='same')(inputs)
     conv1 = layers.Conv2D(64, 3, activation='relu', padding='same')(conv1)
     pool1 = layers.MaxPooling2D(pool_size=(2, 2))(conv1)
@@ -53,11 +52,9 @@ def unet_model(input_shape=(147, 147, 3), num_classes=8):
     conv4 = layers.Conv2D(512, 3, activation='relu', padding='same')(conv4)
     pool4 = layers.MaxPooling2D(pool_size=(2, 2))(conv4)
 
-    # Middle
     conv5 = layers.Conv2D(1024, 3, activation='relu', padding='same')(pool4)
     conv5 = layers.Conv2D(1024, 3, activation='relu', padding='same')(conv5)
 
-    # Decoder
     up6 = layers.Conv2DTranspose(512, 2, strides=(2, 2), padding='same')(conv5)
     crop6 = layers.Cropping2D(cropping=((0, 0), (0, 0)))(conv4)  # Adjust cropping as needed
     concat6 = layers.Concatenate()([up6, crop6])
@@ -145,5 +142,3 @@ real_values = np.array(y_val).argmax(axis=1)
 
 print("unaugmented val acc: " + str((real_values == comb_guesses).mean()))
 
-
-# Save the model

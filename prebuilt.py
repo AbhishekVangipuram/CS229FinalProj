@@ -37,7 +37,7 @@ model = Sequential([
     Dense(8, activation='softmax')
 ])
 
-# Compile the model
+
 model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=5, batch_size=32)
@@ -55,8 +55,6 @@ print("train acc: " + str(train_accuracy))
 # test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 
 # print("test acc: " + str(test_accuracy))
-
-# cnn.save('low_cnn.keras')
 
 training_loss = history.history["accuracy"]
 validation_loss = history.history["val_accuracy"]
@@ -91,6 +89,3 @@ val_loss, val_accuracy = model.evaluate(X_val, y_val)
 
 print("unaugmented val acc: " + str(val_accuracy))
 
-
-# Save the model
-model.save('image_classifier.h5')

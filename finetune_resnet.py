@@ -39,7 +39,6 @@ def high():
 
     base_model = ResNet152(weights='imagenet', include_top=False, input_shape=(147, 147, 3))
 
-    # Freeze the pre-trained layers
     for layer in base_model.layers[:-10]: #new
         layer.trainable = False
 
@@ -55,7 +54,6 @@ def high():
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
 
-    # Compile the model
     model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
     history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, batch_size=32)
@@ -70,8 +68,6 @@ def high():
     test_loss, test_accuracy = model.evaluate(X_test, y_test)
 
     print("test acc: " + str(test_accuracy))
-
-    # cnn.save('low_cnn.keras')
 
     training_loss = history.history["accuracy"]
     validation_loss = history.history["val_accuracy"]
@@ -110,7 +106,6 @@ def low():
 
     base_model = ResNet152(weights='imagenet', include_top=False, input_shape=(147, 147, 3))
 
-    # Freeze the pre-trained layers
     for layer in base_model.layers:
         layer.trainable = False
 
@@ -125,7 +120,6 @@ def low():
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
 
-    # Compile the model
     model.compile(optimizer=Adam(learning_rate=0.01), loss='categorical_crossentropy', metrics=['accuracy'])
 
     history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=3, batch_size=32)
@@ -181,8 +175,6 @@ def low():
 
     test_loss, test_accuracy = model.evaluate(X_test, y_test)
 
-    # Save the model
-    model.save('low_res_image_classifier.h5')
 
 
 

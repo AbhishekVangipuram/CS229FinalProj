@@ -43,7 +43,6 @@ print(X_train.shape)
 
 base_model = ResNet152(weights='imagenet', include_top=False, input_shape=(147, 147, 3))
 
-# Freeze the pre-trained layers
 for layer in base_model.layers:
     layer.trainable = False
 
@@ -77,7 +76,6 @@ model = create_weighted_vgg_model(input_shape, num_classes)
 
 class_weights = compute_class_weight('balanced', classes=range(num_classes), y=np.array(y_keep))
 
-# Create the model
 model = create_weighted_vgg_model(input_shape, num_classes)
 
 model.compile(optimizer=Adam(lr=0.001),
@@ -100,7 +98,6 @@ print("train acc: " + str(train_accuracy))
 
 # print("test acc: " + str(test_accuracy))
 
-# cnn.save('low_cnn.keras')
 
 training_loss = history.history["accuracy"]
 validation_loss = history.history["val_accuracy"]

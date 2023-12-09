@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 import tensorflow as tf
 from tensorflow.keras import layers, models, regularizers
-# from tensorflow.keras.losses import Loss
+\
 
 import matplotlib.pyplot as plt
 
@@ -177,8 +177,6 @@ def low():
     test_loss, test_accuracy = cnn.evaluate(X_test, y_test)
 
     print("test acc: " + str(test_accuracy))
-
-    # cnn.save('low_cnn.keras')
 
     training_loss = history.history["accuracy"]
     validation_loss = history.history["val_accuracy"]

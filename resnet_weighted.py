@@ -37,7 +37,6 @@ print(X_train.shape)
 
 base_model = ResNet152(weights='imagenet', include_top=False, input_shape=(147, 147, 3))
 
-# Freeze the pre-trained layers
 for layer in base_model.layers:
     layer.trainable = False
 
@@ -52,7 +51,6 @@ model.compile(optimizer=Adam(lr=0.001),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# Compile the model
 model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 class_weights = compute_class_weight('balanced', classes=range(8), y=np.array(y_keep))
@@ -69,7 +67,6 @@ print("val acc: " + str(val_accuracy))
 
 # print("test acc: " + str(test_accuracy))
 
-# cnn.save('low_cnn.keras')
 
 training_loss = history.history["accuracy"]
 validation_loss = history.history["val_accuracy"]
