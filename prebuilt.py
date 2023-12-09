@@ -38,7 +38,7 @@ model = Sequential([
 ])
 
 # Compile the model
-model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=5, batch_size=32)
 

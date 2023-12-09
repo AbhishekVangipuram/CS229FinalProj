@@ -12,6 +12,7 @@ meta/
 *.csv
 *.pdf
 make_splits.py
+*.h5
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
