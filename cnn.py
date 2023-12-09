@@ -152,7 +152,7 @@ def low():
         layers.Dense(8, activation='softmax')
         ])
     
-    cnn.compile(optimizer='adam', loss=wcce() , metrics=['accuracy'])
+    cnn.compile(optimizer='adam', loss='categorical_crossentropy' , metrics=['accuracy'])
 
     print("training")
 
@@ -180,6 +180,7 @@ def low():
 
     training_loss = history.history["accuracy"]
     validation_loss = history.history["val_accuracy"]
+    
 
     plt.figure(figsize=(10,5))
     plt.plot(training_loss, label="Training Accuracy")
@@ -187,6 +188,18 @@ def low():
     plt.title("Training and Validation Accuracy")
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
+    plt.legend()
+    plt.show()
+
+    training_loss = history.history["loss"]
+    validation_loss = history.history["val_loss"]
+
+    plt.figure(figsize=(10,5))
+    plt.plot(training_loss, label="Training Loss")
+    plt.plot(validation_loss, label="Validation Loss")
+    plt.title("Training and Validation Loss")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
     plt.legend()
     plt.show()
 
